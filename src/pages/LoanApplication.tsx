@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { LoanType, PersonalData, WorkInfo, LoanDetails, DocumentUpload, LoanApplication as LoanApp } from "@/types/loan";
@@ -15,6 +15,7 @@ import { LoanCalculatorCard } from "@/components/loan/LoanCalculatorCard";
 import { DocumentCard } from "@/components/loan/DocumentCard";
 import { ProgressStepper } from "@/components/loan/ProgressStepper";
 import { CreditScoreCard } from "@/components/loan/CreditScoreCard";
+import { BankCaptcha } from "@/components/loan/BankCaptcha";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -112,6 +113,7 @@ const LoanApplication = () => {
   ]);
 
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   // Loan calculation
   const amount = loanForm.watch("amount");
@@ -200,6 +202,10 @@ const LoanApplication = () => {
     } else if (currentStep === 4) {
       if (!termsAccepted) {
         toast.error("Debes aceptar los términos y condiciones");
+        return;
+      }
+      if (!captchaVerified) {
+        toast.error("Por favor, completa la verificación de seguridad");
         return;
       }
       isValid = true;
@@ -719,6 +725,12 @@ const LoanApplication = () => {
                 </label>
               </div>
             </div>
+
+            {/* Captcha */}
+            <BankCaptcha 
+              onVerify={setCaptchaVerified} 
+              isVerified={captchaVerified}
+            />
           </div>
         );
 
@@ -726,54 +738,55 @@ const LoanApplication = () => {
         return (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="text-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-success/10 text-success mx-auto mb-4 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-sm">
                 <Check className="h-10 w-10" />
               </div>
               <h2 className="text-3xl font-bold mb-2">¡Solicitud Enviada!</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-base">
                 Tu solicitud ha sido recibida y está siendo procesada
               </p>
-              <p className="text-sm font-medium text-primary mt-2">
-                Número de solicitud: {applicationData.id}
-              </p>
+              <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-gradient-to-r from-bank-magenta-light to-pink-100 rounded-full">
+                <span className="text-xs font-medium text-neutral-600">Número de solicitud:</span>
+                <span className="text-sm font-bold text-bank-magenta">{applicationData.id}</span>
+              </div>
             </div>
 
             {applicationData.creditScore && (
               <CreditScoreCard creditScore={applicationData.creditScore} />
             )}
 
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <h3 className="text-lg font-semibold mb-4">Próximos pasos</h3>
-              <ol className="space-y-4">
+            <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-lg font-semibold mb-6 text-neutral-800">Próximos pasos</h3>
+              <ol className="space-y-5">
                 <li className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-bank-magenta-light to-pink-100 text-bank-magenta flex items-center justify-center font-bold text-sm shadow-sm">
                     1
                   </div>
                   <div>
-                    <p className="font-medium">Verificación de documentos</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-semibold text-neutral-800">Verificación de documentos</p>
+                    <p className="text-sm text-neutral-600 mt-1">
                       Nuestro equipo revisará los documentos adjuntados (1-2 días hábiles)
                     </p>
                   </div>
                 </li>
                 <li className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-bank-magenta-light to-pink-100 text-bank-magenta flex items-center justify-center font-bold text-sm shadow-sm">
                     2
                   </div>
                   <div>
-                    <p className="font-medium">Evaluación crediticia</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-semibold text-neutral-800">Evaluación crediticia</p>
+                    <p className="text-sm text-neutral-600 mt-1">
                       Análisis de tu perfil y capacidad de pago
                     </p>
                   </div>
                 </li>
                 <li className="flex gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-bank-magenta-light to-pink-100 text-bank-magenta flex items-center justify-center font-bold text-sm shadow-sm">
                     3
                   </div>
                   <div>
-                    <p className="font-medium">Decisión final</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-semibold text-neutral-800">Decisión final</p>
+                    <p className="text-sm text-neutral-600 mt-1">
                       Recibirás una notificación con la decisión por email y SMS
                     </p>
                   </div>
@@ -872,7 +885,7 @@ const LoanApplication = () => {
                     variant="primary"
                     onClick={handleSubmit}
                     loading={isSubmitting}
-                    disabled={!termsAccepted}
+                    disabled={!termsAccepted || !captchaVerified}
                     fullWidth
                   >
                     {isSubmitting ? "Enviando..." : "Enviar solicitud"}

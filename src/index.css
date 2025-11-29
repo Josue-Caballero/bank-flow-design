@@ -8,10 +8,10 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Banking Design System - Colors */
-    --bank-blue: 217 100% 42%;           /* #0055D4 */
-    --bank-blue-light: 220 82% 94%;      /* #E6EEFA */
-    --bank-blue-dark: 217 100% 30%;      /* #003C99 */
+    /* Banking Design System - Colors (BANISI Inspired) */
+    --bank-magenta: 328 100% 45%;        /* #E6007E - Primary Magenta */
+    --bank-magenta-light: 328 100% 95%;  /* #FFE6F5 - Light Pink */
+    --bank-magenta-dark: 328 100% 35%;   /* #B30062 - Dark Magenta */
     
     --neutral-900: 220 27% 12%;          /* #111827 */
     --neutral-700: 217 19% 27%;          /* #374151 */
@@ -31,7 +31,7 @@ All colors MUST be HSL.
     --card: 0 0% 100%;
     --card-foreground: var(--neutral-900);
     
-    --primary: var(--bank-blue);
+    --primary: var(--bank-magenta);
     --primary-foreground: 0 0% 100%;
     
     --secondary: var(--neutral-100);
@@ -40,15 +40,18 @@ All colors MUST be HSL.
     --muted: var(--neutral-100);
     --muted-foreground: var(--neutral-500);
     
-    --accent: var(--bank-blue-light);
-    --accent-foreground: var(--bank-blue-dark);
+    --accent: var(--bank-magenta-light);
+    --accent-foreground: var(--bank-magenta-dark);
     
     --destructive: var(--error);
     --destructive-foreground: 0 0% 100%;
     
     --border: var(--neutral-300);
     --input: var(--neutral-300);
-    --ring: var(--bank-blue);
+    --ring: var(--bank-magenta);
+    
+    --popover: 0 0% 100%;                /* Fondo blanco sólido para dropdowns */
+    --popover-foreground: var(--neutral-900);
     
     --radius: 0.75rem;
     
@@ -68,5 +71,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+  }
+  
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
   }
 }
